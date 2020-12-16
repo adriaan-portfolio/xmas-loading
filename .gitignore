@@ -1,0 +1,5 @@
+/.pytest_cache
+/.vscode
+/secrets.py
+/venv
+/__pycache__
