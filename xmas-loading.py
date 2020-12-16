@@ -1,6 +1,7 @@
 from config import create_api
 import datetime
 import calendar
+from time import sleep
 
 FILE_NAME = 'last-percentage.txt'
 
@@ -19,6 +20,12 @@ def retrieve_last_percentage(file_name):
     return int(last_seen_percentage)
 
 def store_last_percentage(last_seen_percentage,file_name):
+    """Store lastest percentage tweeted
+
+    Args:
+        last_seen_percentage (integer): Latest percentage calculated
+        file_name (string): Name of file used to store percentage value
+    """
     f_write = open(file_name, 'w')
     f_write.write('%d' % last_seen_percentage)
     f_write.close()
@@ -76,23 +83,17 @@ def generate_progress_bar(today,percentage):
 
 
 def main():
-    #twitter_api = create_api()
-    #today = datetime.date.today()
-    start_date = datetime.date(2020,12,26)
-    end_date = datetime.date(2021,12,25)
-    delta = datetime.timedelta(days=1)
-
-    while start_date <= end_date:
-        today = start_date
-        percentage = percentage_complete(today)
-        
+    twitter_api = create_api()
+    
+    while True:
+        today = datetime.date.today()
+        percentage = percentage_complete(today)            
         last_percentage = retrieve_last_percentage(FILE_NAME)
         if percentage > last_percentage:
-            #tweet = generate_progress_bar(today, percentage)
-            #twitter_api.update_status(tweet)
-            print(percentage)
+            tweet = generate_progress_bar(today, percentage)
+            twitter_api.update_status(tweet)
             store_last_percentage(percentage, FILE_NAME)
-        start_date += delta
+        sleep(60*60*24)
 
 if __name__ == "__main__":
     main()
