@@ -1,1 +1,1 @@
-worker: python countdown-to-xmas.py
+worker: python xmas-loading.py
