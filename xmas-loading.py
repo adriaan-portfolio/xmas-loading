@@ -2,6 +2,26 @@ from config import create_api
 import datetime
 import calendar
 
+FILE_NAME = 'last-percentage.txt'
+
+def retrieve_last_percentage(file_name):
+    """Retrieve last percentage value tweeted
+
+    Args:
+        file_name (string): Name of file used to store percentage value
+
+    Returns:
+        integer: Last percentage value tweeted
+    """
+    f_read = open(file_name, 'r')
+    last_seen_percentage = f_read.read().strip()
+    f_read.close()
+    return int(last_seen_percentage)
+
+def store_last_percentage(last_seen_percentage,file_name):
+    f_write = open(file_name, 'w')
+    f_write.write('%d' % last_seen_percentage)
+    f_write.close()
 
 def percentage_complete(today):
     """Calculates the progess of reaching Christmas day
@@ -56,12 +76,23 @@ def generate_progress_bar(today,percentage):
 
 
 def main():
-    today = datetime.date.today()
-    percentage = percentage_complete(today)
-    tweet = generate_progress_bar(today, percentage)
     #twitter_api = create_api()
-    #twitter_api.update_status(tweet)
+    #today = datetime.date.today()
+    start_date = datetime.date(2020,12,26)
+    end_date = datetime.date(2021,12,25)
+    delta = datetime.timedelta(days=1)
 
+    while start_date <= end_date:
+        today = start_date
+        percentage = percentage_complete(today)
+        
+        last_percentage = retrieve_last_percentage(FILE_NAME)
+        if percentage > last_percentage:
+            #tweet = generate_progress_bar(today, percentage)
+            #twitter_api.update_status(tweet)
+            print(percentage)
+            store_last_percentage(percentage, FILE_NAME)
+        start_date += delta
 
 if __name__ == "__main__":
     main()
