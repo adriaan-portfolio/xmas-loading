@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger()
 
 def create_api():
-    if "key" in locals():
+    if "key" in globals():
         consumer_key = key[0]
         consumer_secret = key[1]
         access_token = key[2]
