@@ -93,7 +93,8 @@ def main():
             tweet = generate_progress_bar(today, percentage)
             twitter_api.update_status(tweet)
             store_last_percentage(percentage, FILE_NAME)
-        sleep(60*60*24)
+            print(f"INFO: Percentage updated to {percentage}%")
+        sleep(60*60*24/2)
 
 if __name__ == "__main__":
     main()
