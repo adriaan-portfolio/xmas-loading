@@ -1,16 +1,21 @@
 import tweepy
 from secrets import *
-
+from os import environ
 import logging
-
 
 logger = logging.getLogger()
 
 def create_api():
-    consumer_key = key[0]
-    consumer_secret = key[1]
-    access_token = key[2]
-    access_token_secret = key[3]
+    if "key" in locals():
+        consumer_key = key[0]
+        consumer_secret = key[1]
+        access_token = key[2]
+        access_token_secret = key[3]
+    else:
+        consumer_key = environ['CONSUMER_KEY']
+        consumer_secret = environ['CONSUMER_SECRET']
+        access_token = environ['ACCESS_KEY']
+        access_token_secret = environ['ACCESS_SECRET']
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
@@ -18,10 +23,9 @@ def create_api():
         wait_on_rate_limit_notify=True)
     try:
         api.verify_credentials()
-        print("ok")
+        print("INFO: API created")
     except Exception as e:
         logging.error("Error creating API", exc_info=True)
         raise e
-    logging.info("API created")
     
     return api
