@@ -23,7 +23,7 @@ def create_api():
         wait_on_rate_limit_notify=True)
     try:
         api.verify_credentials()
-        print("INFO: API created")
+        logging.info("API created")
     except Exception as e:
         logging.error("Error creating API", exc_info=True)
         raise e

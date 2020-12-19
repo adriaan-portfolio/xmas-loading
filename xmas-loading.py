@@ -2,6 +2,7 @@ from config import create_api
 import datetime
 import calendar
 from time import sleep
+import logging
 
 FILE_NAME = 'last-percentage.txt'
 
@@ -83,17 +84,20 @@ def generate_progress_bar(today,percentage):
 
 
 def main():
+    logging.info("Creating API...")
     twitter_api = create_api()
     
     while True:
+        logging.info("Checking progress percentage...")
         today = datetime.date.today()
         percentage = percentage_complete(today)            
         last_percentage = retrieve_last_percentage(FILE_NAME)
         if percentage > last_percentage:
+            logging.info("Updating percentage value...")
             tweet = generate_progress_bar(today, percentage)
             twitter_api.update_status(tweet)
             store_last_percentage(percentage, FILE_NAME)
-            print(f"INFO: Percentage updated to {percentage}%")
+            logging.info(f"Percentage updated to {percentage}%")
         sleep(60*60*24/2)
 
 if __name__ == "__main__":
