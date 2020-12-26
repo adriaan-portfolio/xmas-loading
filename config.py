@@ -1,5 +1,5 @@
 import tweepy
-from secrets import *
+from secrets import key 
 from os import environ
 import logging
 
