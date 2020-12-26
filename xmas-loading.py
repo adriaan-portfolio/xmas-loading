@@ -1,11 +1,10 @@
-from config import create_api
+from config_tweepy import create_api
+from config_dropbox import create_dropbox_api
 import datetime
 import calendar
 from time import sleep
 import logging
-from secrets import DBX_TOKEN
 import dropbox
-from dropbox import Dropbox
 
 FILE_NAME = 'last-percentage.txt'
 
@@ -108,14 +107,13 @@ def main():
     while True:
         logging.info("Checking progress percentage...")
         today = datetime.date.today()
-        dbx = Dropbox(DBX_TOKEN)
+        dbx = create_dropbox_api()
         percentage = percentage_complete(today)            
         last_percentage = read_file(dbx, f"/{FILE_NAME}")
         if percentage > last_percentage:
             logging.info("Updating percentage value...")
             tweet = generate_progress_bar(today, percentage)
-            print(tweet)
-            #twitter_api.update_status(tweet)
+            twitter_api.update_status(tweet)
             store_last_percentage(percentage, FILE_NAME)
             write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
             logging.info(f"Percentage updated to {percentage}%")
