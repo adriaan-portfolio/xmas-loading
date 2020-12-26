@@ -3,26 +3,43 @@ import datetime
 import calendar
 from time import sleep
 import logging
+from secrets import DBX_TOKEN
+import dropbox
+from dropbox import Dropbox
 
 FILE_NAME = 'last-percentage.txt'
 
-def retrieve_last_percentage(file_name):
-    """Retrieve last percentage value tweeted
+def read_file(dbx, from_file):
+    """Read file from Dropbox 
 
     Args:
-        file_name (string): Name of file used to store percentage value
+        dbx (Dropbox object): Dropbox object generated from API token
+        from_file (string): File location in Dropbox accounts
 
     Returns:
-        integer: Last percentage value tweeted
+        int32: Percentage value
     """
-    f_read = open(file_name, 'r')
-    last_seen_percentage = f_read.read().strip()
-    f_read.close()
-    return int(last_seen_percentage)
+    _, f = dbx.files_download(from_file)
+    percentage = f.content
+    percentage = percentage.decode('utf-8')
+    print(percentage)
+    return int(percentage)
+
+
+def write_file(dbx, last_percentage_file, to_file_location):
+    """Write file to dropbox account
+
+    Args:
+        dbx (dropbox object): Dropbox object generated with API token
+        last_percentage_file (file): Name of file that will be uploaded
+        to_file_location (string): Dropbox location where file is written to
+    """
+    with open(last_percentage_file, 'rb') as f:
+        dbx.files_upload(f.read(), to_file_location, mode=dropbox.files.WriteMode.overwrite)
+
 
 def store_last_percentage(last_seen_percentage,file_name):
     """Store lastest percentage tweeted
-
     Args:
         last_seen_percentage (integer): Latest percentage calculated
         file_name (string): Name of file used to store percentage value
@@ -30,6 +47,7 @@ def store_last_percentage(last_seen_percentage,file_name):
     f_write = open(file_name, 'w')
     f_write.write('%d' % last_seen_percentage)
     f_write.close()
+
 
 def percentage_complete(today):
     """Calculates the progess of reaching Christmas day
@@ -54,7 +72,7 @@ def percentage_complete(today):
 
     days_until_xmas = christmas_date-today
     percentage = round((days_in_year - int(days_until_xmas.days))/days_in_year*100)
-
+    
     return percentage
 
 
@@ -90,15 +108,18 @@ def main():
     while True:
         logging.info("Checking progress percentage...")
         today = datetime.date.today()
+        dbx = Dropbox(DBX_TOKEN)
         percentage = percentage_complete(today)            
-        last_percentage = retrieve_last_percentage(FILE_NAME)
+        last_percentage = read_file(dbx, f"/{FILE_NAME}")
         if percentage > last_percentage:
             logging.info("Updating percentage value...")
             tweet = generate_progress_bar(today, percentage)
-            twitter_api.update_status(tweet)
+            print(tweet)
+            #twitter_api.update_status(tweet)
             store_last_percentage(percentage, FILE_NAME)
+            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
             logging.info(f"Percentage updated to {percentage}%")
         sleep(60*60*24/2)
 
-if __name__ == "__main__":
+if __name__ == "__main__":           
     main()
