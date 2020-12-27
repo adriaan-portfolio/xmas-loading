@@ -6,6 +6,9 @@ from time import sleep
 import logging
 import dropbox
 
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
+
 FILE_NAME = 'last-percentage.txt'
 
 def read_file(dbx, from_file):
@@ -21,7 +24,6 @@ def read_file(dbx, from_file):
     _, f = dbx.files_download(from_file)
     percentage = f.content
     percentage = percentage.decode('utf-8')
-    print(percentage)
     return int(percentage)
 
 
