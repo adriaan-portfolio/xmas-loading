@@ -103,14 +103,16 @@ def generate_progress_bar(today,percentage):
 
 
 def main():
-    logging.info("Creating API...")
+    logging.info("Creating Twitter API...")
     twitter_api = create_api()
     
     while True:
         logging.info("Checking progress percentage...")
         today = datetime.date.today()
+        logging.info("Creating Dropbox object...")
         dbx = create_dropbox_api()
-        percentage = percentage_complete(today)            
+        percentage = percentage_complete(today)
+        logging.info("Retrieving last percentage tweeted...")            
         last_percentage = read_file(dbx, f"/{FILE_NAME}")
         if percentage > last_percentage:
             logging.info("Updating percentage value...")
@@ -119,6 +121,8 @@ def main():
             store_last_percentage(percentage, FILE_NAME)
             write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
             logging.info(f"Percentage updated to {percentage}%")
+        else:
+            logging.info("Last and current percentage the same, no action required.")
         sleep(60*60*24/2)
 
 if __name__ == "__main__":           
