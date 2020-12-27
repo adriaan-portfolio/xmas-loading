@@ -1,4 +1,4 @@
-from secrets import DBX_TOKEN
+from secrets import *
 from os import environ
 import logging
 from dropbox import Dropbox
