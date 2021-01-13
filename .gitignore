@@ -3,6 +3,12 @@
 /secrets.py
 /venv
 /__pycache__
+<<<<<<< HEAD
 /*.png*
 /*.jpg*
 /*.ipynb*
+=======
+/.png
+/.jpg
+*.txt
+>>>>>>> 7722f3b0e8d8efbe3cf8aa6525cb5df2e7b167dd

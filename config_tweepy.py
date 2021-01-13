@@ -3,7 +3,8 @@ from secrets import *
 from os import environ
 import logging
 
-logger = logging.getLogger()
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
 
 def create_api():
     if "key" in globals():
