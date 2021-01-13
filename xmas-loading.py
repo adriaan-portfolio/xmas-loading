@@ -12,14 +12,9 @@ logging.getLogger().setLevel(logging.INFO)
 
 FILE_NAME = 'last-percentage.txt'
 
-<<<<<<< HEAD
 
 def retrieve_last_percentage(file_name):
     """Retrieve last percentage value tweeted
-=======
-def read_file(dbx, from_file):
-    """Read file from Dropbox 
->>>>>>> 7722f3b0e8d8efbe3cf8aa6525cb5df2e7b167dd
 
     Args:
         dbx (Dropbox object): Dropbox object generated from API token
@@ -81,7 +76,6 @@ def percentage_complete(today):
 
     days_until_xmas = christmas_date-today
     percentage = round((days_in_year - int(days_until_xmas.days))/days_in_year*100)
-<<<<<<< HEAD
 
     if today.month == 12 and today.day == 25:
         percentage = 100
@@ -95,9 +89,6 @@ def percentage_complete(today):
         if percentage == 0:
             percentage = 1
 
-=======
-    
->>>>>>> 7722f3b0e8d8efbe3cf8aa6525cb5df2e7b167dd
     return percentage
 
 
@@ -129,6 +120,7 @@ def update_status(twitter_api, tweet):
     logging.info(f"Percentage updated.")
 
 
+
 def main():
     logging.info("Creating Twitter API...")
     twitter_api = create_api()
@@ -136,7 +128,6 @@ def main():
     while True:
         logging.info("Checking progress percentage...")
         today = datetime.date.today()
-<<<<<<< HEAD
         percentage = percentage_complete(today)            
         last_percentage = retrieve_last_percentage(FILE_NAME)
 
@@ -151,22 +142,6 @@ def main():
         else:
             logging.info("Progress percentage unchanged...")
             
-=======
-        logging.info("Creating Dropbox object...")
-        dbx = create_dropbox_api()
-        percentage = percentage_complete(today)
-        logging.info("Retrieving last percentage tweeted...")            
-        last_percentage = read_file(dbx, f"/{FILE_NAME}")
-        if percentage > last_percentage:
-            logging.info("Updating percentage value...")
-            tweet = generate_progress_bar(today, percentage)
-            twitter_api.update_status(tweet)
-            store_last_percentage(percentage, FILE_NAME)
-            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
-            logging.info(f"Percentage updated to {percentage}%")
-        else:
-            logging.info("Last and current percentage the same, no action required.")
->>>>>>> 7722f3b0e8d8efbe3cf8aa6525cb5df2e7b167dd
         sleep(60*60*24/2)
 
 if __name__ == "__main__":           
