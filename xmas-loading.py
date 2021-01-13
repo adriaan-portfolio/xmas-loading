@@ -6,20 +6,16 @@ from time import sleep
 import logging
 import dropbox
 
+FILE_NAME = 'last-percentage.txt'
+
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
-
-FILE_NAME = 'last-percentage.txt'
-
-
-def retrieve_last_percentage(file_name):
-    """Retrieve last percentage value tweeted
-
+def read_file(dbx, from_file):
+    """Read file from Dropbox 
     Args:
         dbx (Dropbox object): Dropbox object generated from API token
         from_file (string): File location in Dropbox accounts
-
     Returns:
         int32: Percentage value
     """
@@ -27,7 +23,6 @@ def retrieve_last_percentage(file_name):
     percentage = f.content
     percentage = percentage.decode('utf-8')
     return int(percentage)
-
 
 def write_file(dbx, last_percentage_file, to_file_location):
     """Write file to dropbox account
@@ -39,7 +34,6 @@ def write_file(dbx, last_percentage_file, to_file_location):
     """
     with open(last_percentage_file, 'rb') as f:
         dbx.files_upload(f.read(), to_file_location, mode=dropbox.files.WriteMode.overwrite)
-
 
 
 def store_last_percentage(last_seen_percentage,file_name):
@@ -128,17 +122,22 @@ def main():
     while True:
         logging.info("Checking progress percentage...")
         today = datetime.date.today()
+        logging.info("Creating Dropbox object...")
+        dbx = create_dropbox_api()
+        logging.info("Retrieving last percentage tweeted...")      
         percentage = percentage_complete(today)            
-        last_percentage = retrieve_last_percentage(FILE_NAME)
+        last_percentage = read_file(dbx, f"/{FILE_NAME}")
 
         if today == datetime.date(today.year,12,25):
             update_status(twitter_api, generate_progress_bar(100))
-            store_last_percentage(0, FILE_NAME)
+            store_last_percentage(percentage, FILE_NAME)
+            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
         elif today == datetime.date(today.year,12,26):
             update_status(twitter_api, generate_progress_bar(0))
         elif percentage > last_percentage:
             update_status(twitter_api, generate_progress_bar(percentage))
             store_last_percentage(percentage, FILE_NAME)
+            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
         else:
             logging.info("Progress percentage unchanged...")
             
