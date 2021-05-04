@@ -119,29 +119,29 @@ def main():
     logging.info("Creating Twitter API...")
     twitter_api = create_api()
     
-    while True:
-        logging.info("Checking progress percentage...")
-        today = datetime.date.today()
-        logging.info("Creating Dropbox object...")
-        dbx = create_dropbox_api()
-        logging.info("Retrieving last percentage tweeted...")      
-        percentage = percentage_complete(today)            
-        last_percentage = read_file(dbx, f"/{FILE_NAME}")
+    
+    logging.info("Checking progress percentage...")
+    today = datetime.date.today()
+    logging.info("Creating Dropbox object...")
+    dbx = create_dropbox_api()
+    logging.info("Retrieving last percentage tweeted...")      
+    percentage = percentage_complete(today)            
+    last_percentage = read_file(dbx, f"/{FILE_NAME}")
 
-        if today == datetime.date(today.year,12,25):
-            update_status(twitter_api, generate_progress_bar(100))
-            store_last_percentage(percentage, FILE_NAME)
-            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
-        elif today == datetime.date(today.year,12,26):
-            update_status(twitter_api, generate_progress_bar(0))
-        elif percentage > last_percentage:
-            update_status(twitter_api, generate_progress_bar(percentage))
-            store_last_percentage(percentage, FILE_NAME)
-            write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
-        else:
-            logging.info("Progress percentage unchanged...")
+    if today == datetime.date(today.year,12,25):
+        update_status(twitter_api, generate_progress_bar(100))
+        store_last_percentage(percentage, FILE_NAME)
+        write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
+    elif today == datetime.date(today.year,12,26):
+        update_status(twitter_api, generate_progress_bar(0))
+    elif percentage > last_percentage:
+        update_status(twitter_api, generate_progress_bar(percentage))
+        store_last_percentage(percentage, FILE_NAME)
+        write_file(dbx, FILE_NAME, f"/{FILE_NAME}")
+    else:
+        logging.info("Progress percentage unchanged...")
             
-        sleep(60*60*24/2)
+
 
 if __name__ == "__main__":           
     main()
