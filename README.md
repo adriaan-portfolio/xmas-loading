@@ -3,6 +3,6 @@
 
 **Xmas loading...** is a Twitter bot that periodically tweets a progress bar to get you excited about Christmas coming closer!
 
-![](xmas-loading.png)
+![](xmas-loading.PNG)
 
 Designed using Python and Tweepy. Data stored on Dropbox. Hosted on Heroku.
